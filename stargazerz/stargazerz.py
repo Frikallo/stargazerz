@@ -14,7 +14,7 @@ class Crawler:
         self.user_email = {}
 
     def get_all_stargazers(self, username, repository, page=1):
-        print(f"Fetching page {page} of stargazers for {username}/{repository}.")
+        print(f"[+] Fetching page {page} of stargazers for {username}/{repository}")
         url = f'https://github.com/{username}/{repository}/stargazers?page={page}'
         response = requests.get(url)
 
@@ -132,7 +132,18 @@ class Crawler:
             self.pbar.update(1)
 
     def run(self):
+        start_time = time.time()
+
+        print("[+] Target: %s/%s" % (self.target[0], self.target[1]))
+        print("[+] Threads: %d" % self.threads)
+        print("[+] Starting crawler")
+        print("[+] Crawler started")
+
         self.get_all_stargazers(self.target[0], self.target[1])
+
+        print("[+] Found %d stargazers" % len(self.stargazers))
+        print("[+] Fetching emails")
+
         self.pbar = tqdm(total=len(self.stargazers), desc="Fetching emails", unit="stargazers", leave=False)
         chunk_size = len(self.stargazers) // self.threads
         stargazer_chunks = [self.stargazers[i:i + chunk_size] for i in range(0, len(self.stargazers), chunk_size)]
@@ -146,17 +157,21 @@ class Crawler:
         for thread in threads:
             thread.join()
 
-        self.pbar.close()
+        self.pbar.set_description("Complete ✅")
+        print(" [+] Crawler finished") # extra space to overwrite the tqdm bar
+        print("[+] Time: %.2f seconds" % (time.time() - start_time))
 
     def _clean(self, items):
         items = [item.strip() for item in items]
         items = list(set(items))
         return items
     
-    def results(self):
+    def print_results(self):
         cleaned_stargazers = self._clean(self.stargazers)
         cleaned_emails = self._clean(self.emails)
-        print(f"{len(cleaned_stargazers)} stargazers.\n{len(cleaned_emails)} emails.")
+        print("[-] Results")
+        print("[+] Stargazers: %d" % len(cleaned_stargazers))
+        print("[+] Emails: %d" % len(cleaned_emails))
     
     def save_results(self,  mode: str, file: str):
         if mode == "emails":
@@ -165,24 +180,27 @@ class Crawler:
             with open(file, "w") as f:
                 for email in cleaned_emails:
                     f.write(email + "\n")
+            print("[+] Emails saved to %s" % file)
         elif mode == "stargazers":
             cleaned_stargazers = self._clean(self.stargazers)
             
             with open(file, "w") as f:
                 for stargazer in cleaned_stargazers:
                     f.write(stargazer + "\n")
+            print("[+] Stargazers saved to %s" % file)
         elif mode == "all":
             with open(file, "w") as f:
                 for username, email in self.user_email.items():
                     f.write(f"{username} {email}\n")
+            print("[+] All results saved to %s" % file)
         else:
-            print("Mode not supported. Use 'emails' or 'stargazers'.")
+            print("[!] Mode not supported. Use 'emails' or 'stargazers'.")
             return
         
 if __name__ == "__main__":
     crawler = Crawler(threads=16, target="Frikallo/MISST")
     crawler.run()
-    crawler.results()
+    crawler.print_results()
     crawler.save_results("emails", "emails.txt")
     crawler.save_results("stargazers", "stargazers.txt")
     crawler.save_results("all", "all.txt")
