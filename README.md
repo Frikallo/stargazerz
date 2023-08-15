@@ -4,8 +4,8 @@
 
 [![PyPI](https://img.shields.io/pypi/v/stargazerz.svg?color=orange)](https://pypi.org/project/stargazerz/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dd/stargazerz?color=orange)](https://pypi.org/project/stargazerz/) 
-[![License](https://img.shields.io/github/license/frikallo/stargazerz?color=orange)](https://github.com/Frikallo/MISST/blob/main/LICENSE) 
-![GitHub code size](https://img.shields.io/github/languages/code-size/frikallo/stargazerz?color=orange)
+[![License](https://img.shields.io/github/license/frikallo/stargazerz?color=orange)](https://github.com/Frikallo/stargazerz/blob/main/LICENSE) 
+[![GitHub code size](https://img.shields.io/github/languages/code-size/frikallo/stargazerz?color=orange)](https://github.com/Frikallo/stargazerz/tree/main/stargazerz)
 
 </div>
 
